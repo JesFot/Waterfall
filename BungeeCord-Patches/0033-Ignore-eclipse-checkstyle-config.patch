@@ -1,0 +1,21 @@
+From 1a94ae3fbdf13b21f43dc86ef625fa4e57701454 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
+Date: Fri, 6 Mar 2020 02:28:44 +0530
+Subject: [PATCH] Ignore eclipse checkstyle config
+
+
+diff --git a/.gitignore b/.gitignore
+index 6221a865..6818d77f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,6 +1,7 @@
+ # Eclipse stuff
+ .classpath
+ .project
++.checkstyle
+ .settings/
+ 
+ # netbeans
+-- 
+2.24.0.windows.2
+

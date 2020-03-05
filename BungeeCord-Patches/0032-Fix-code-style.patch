@@ -1,0 +1,617 @@
+From e3538b375c625b7332afd59bb68aca97e0961015 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
+Date: Fri, 6 Mar 2020 02:27:58 +0530
+Subject: [PATCH] Fix code style
+
+
+diff --git a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/Hex.java b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/Hex.java
+index e81f5314..8ea1f787 100644
+--- a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/Hex.java
++++ b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/Hex.java
+@@ -40,7 +40,7 @@ public class Hex
+             {
+                 return new String( chars, charOffset, chars.length );
+             }
+-        });
++        } );
+     }
+ 
+     public static void decode(CharSequence chars, int charOffset, byte[] dest, int offset, int length)
+@@ -97,8 +97,8 @@ public class Hex
+         }
+     }
+     private static final char[] ENCODE_TABLE = new char[] {
+-            '0', '1', '2', '3', '4', '5', '6', '7',
+-            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
++        '0', '1', '2', '3', '4', '5', '6', '7',
++        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+     };
+     private static final byte[] DECODE_TABLE = new byte[128];
+ 
+@@ -129,7 +129,7 @@ public class Hex
+         }
+         if ( value < 0 )
+         {
+-        	throw new IllegalArgumentException("Invalid character " + c);
++            throw new IllegalArgumentException( "Invalid character " + c );
+         }
+         return value;
+     }
+@@ -139,4 +139,4 @@ public class Hex
+         assert ( b & 0xF ) == b : "Out of range " + b;
+         return ENCODE_TABLE[ b ];
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
+index 298a87fc..21557b37 100644
+--- a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
++++ b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
+@@ -1,13 +1,15 @@
+ package me.jesfot.waterfallmc.altwaterfall.utils;
+-import java.util.UUID;
+ 
+ import com.google.common.base.Preconditions;
+ import com.google.common.primitives.Longs;
++import java.util.UUID;
+ 
+-public class UUIDUtils
++public final class UUIDUtils
+ {
+ 
+-    private UUIDUtils() {}
++    private UUIDUtils()
++    {
++    }
+ 
+     public static String undash(String id)
+     {
+@@ -50,7 +52,7 @@ public class UUIDUtils
+         try
+         {
+             return fromBytes( Hex.decode( s ) );
+-        } catch (IllegalArgumentException e)
++        } catch ( IllegalArgumentException e )
+         {
+             throw new IllegalArgumentException( "Invalid UUID: " + s );
+         }
+@@ -88,4 +90,4 @@ public class UUIDUtils
+                 bytes[12], bytes[13], bytes[14], bytes[15] );
+         return new UUID( msb, lsb );
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/api/src/main/java/net/md_5/bungee/Util.java b/api/src/main/java/net/md_5/bungee/Util.java
+index 09e306aa..5c7ad591 100644
+--- a/api/src/main/java/net/md_5/bungee/Util.java
++++ b/api/src/main/java/net/md_5/bungee/Util.java
+@@ -4,13 +4,12 @@ import com.google.common.base.Joiner;
+ import com.google.common.primitives.Ints;
+ import com.google.common.primitives.UnsignedLongs;
+ import io.netty.channel.unix.DomainSocketAddress;
+-import me.jesfot.waterfallmc.altwaterfall.utils.Hex;
+-
+ import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
+ import java.net.URI;
+ import java.net.URISyntaxException;
+ import java.util.UUID;
++import me.jesfot.waterfallmc.altwaterfall.utils.Hex;
+ 
+ /**
+  * Series of utility classes to perform various operations.
+diff --git a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+index 4971171e..6cba4572 100644
+--- a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
++++ b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+@@ -39,8 +39,8 @@ public interface ProxyConfig
+      * Set of all servers.
+      *
+      * @return servers
+-+     * @deprecated The returned map may be modified concurrently by the proxy.
+-+     *             The safe alternative is {@link #getServersCopy()}.
++     * @deprecated The returned map may be modified concurrently by the proxy.
++     *             The safe alternative is {@link #getServersCopy()}.
+      */
+     @Deprecated
+     Map<String, ServerInfo> getServers();
+diff --git a/api/src/main/java/net/md_5/bungee/api/event/LoginEvent.java b/api/src/main/java/net/md_5/bungee/api/event/LoginEvent.java
+index c0174913..22b8d59f 100644
+--- a/api/src/main/java/net/md_5/bungee/api/event/LoginEvent.java
++++ b/api/src/main/java/net/md_5/bungee/api/event/LoginEvent.java
+@@ -8,9 +8,9 @@ import lombok.ToString;
+ import net.md_5.bungee.api.Callback;
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.md_5.bungee.api.chat.TextComponent;
++import net.md_5.bungee.api.connection.LoginResult;
+ import net.md_5.bungee.api.connection.PendingConnection;
+ import net.md_5.bungee.api.plugin.Cancellable;
+-import net.md_5.bungee.api.connection.LoginResult;
+ 
+ /**
+  * Event called to represent a player logging in.
+@@ -44,7 +44,7 @@ public class LoginEvent extends AsyncEvent<LoginEvent> implements Cancellable
+         super( done );
+         this.connection = connection;
+     }
+-    
++
+     public LoginEvent(PendingConnection connection, Callback<LoginEvent> done, LoginResult loginResult)
+     {
+         super( done );
+diff --git a/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/Log4JLogHandler.java b/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/Log4JLogHandler.java
+index 3308da0a..35cdc854 100644
+--- a/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/Log4JLogHandler.java
++++ b/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/Log4JLogHandler.java
+@@ -1,17 +1,16 @@
+ package me.jesfot.waterfallmc.altwaterfall.log4j;
+ 
+ import com.google.common.base.Strings;
+-import org.apache.logging.log4j.Level;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+-import org.apache.logging.log4j.jul.LevelTranslator;
+-import org.apache.logging.log4j.message.MessageFormatMessage;
+-
+ import java.util.Map;
+ import java.util.MissingResourceException;
+ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.logging.Handler;
+ import java.util.logging.LogRecord;
++import org.apache.logging.log4j.Level;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import org.apache.logging.log4j.jul.LevelTranslator;
++import org.apache.logging.log4j.message.MessageFormatMessage;
+ 
+ /**
+  * A {@link Handler} that forwards all log messages to the Log4J logger.
+@@ -65,4 +64,4 @@ class Log4JLogHandler extends Handler
+     public void close()
+     {
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/WaterfallLogger.java b/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/WaterfallLogger.java
+index 3db3c6c7..84839b56 100644
+--- a/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/WaterfallLogger.java
++++ b/log4j/src/main/java/me/jesfot/waterfallmc/altwaterfall/log4j/WaterfallLogger.java
+@@ -2,7 +2,6 @@ package me.jesfot.waterfallmc.altwaterfall.log4j;
+ 
+ import java.util.logging.Handler;
+ import java.util.logging.Logger;
+-
+ import org.apache.logging.log4j.Level;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.io.IoBuilder;
+diff --git a/log4j/src/main/resources/log4j2.component.properties b/log4j/src/main/resources/log4j2.component.properties
+index 97a9a11e..e43f5dac 100644
+--- a/log4j/src/main/resources/log4j2.component.properties
++++ b/log4j/src/main/resources/log4j2.component.properties
+@@ -1,2 +1,2 @@
+ log4j2.contextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector
+-log4j.skipJansi=true
+\ No newline at end of file
++log4j.skipJansi=true
+diff --git a/log4j/src/main/resources/log4j2.xml b/log4j/src/main/resources/log4j2.xml
+index b37a8909..3b3525f0 100644
+--- a/log4j/src/main/resources/log4j2.xml
++++ b/log4j/src/main/resources/log4j2.xml
+@@ -1,32 +1,32 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Configuration status="warn">
+-	<Appenders>
+-		<TerminalConsole name="TerminalConsole">
++    <Appenders>
++        <TerminalConsole name="TerminalConsole">
+             <PatternLayout>
+                 <LoggerNamePatternSelector defaultPattern="%highlightError{[%d{HH:mm:ss} %level] [%logger]: %minecraftFormatting{%msg}%n%xEx}">
+                     <!-- Log root and BungeeCord loggers without prefix -->
+                     <PatternMatch key=",BungeeCord" pattern="%highlightError{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg}%n%xEx}" />
+                 </LoggerNamePatternSelector>
+             </PatternLayout>
+-		</TerminalConsole>
+-		<RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="false">
++        </TerminalConsole>
++        <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz" immediateFlush="false">
+             <PatternLayout>
+                 <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %minecraftFormatting{%msg}{strip}%n">
+                     <!-- Log root and BungeeCord loggers without prefix -->
+                     <PatternMatch key=",BungeeCord" pattern="[%d{HH:mm:ss}] [%t/%level]: %minecraftFormatting{%msg}{strip}%n" />
+                 </LoggerNamePatternSelector>
+             </PatternLayout>
+-			<Policies>
+-				<TimeBasedTriggeringPolicy />
+-				<OnStartupTriggeringPolicy />
+-			</Policies>
+-		</RollingRandomAccessFile>
+-	</Appenders>
++            <Policies>
++                <TimeBasedTriggeringPolicy />
++                <OnStartupTriggeringPolicy />
++            </Policies>
++        </RollingRandomAccessFile>
++    </Appenders>
+ 
+-	<Loggers>
+-		<Root level="info">
+-			<AppenderRef ref="TerminalConsole" />
+-			<AppenderRef ref="File" />
+-		</Root>
+-	</Loggers>
+-</Configuration>
+\ No newline at end of file
++    <Loggers>
++        <Root level="info">
++            <AppenderRef ref="TerminalConsole" />
++            <AppenderRef ref="File" />
++        </Root>
++    </Loggers>
++</Configuration>
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java b/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
+index adcb8606..ebfdfa16 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
+@@ -6,9 +6,7 @@ import gnu.trove.map.TIntObjectMap;
+ import gnu.trove.map.TObjectIntMap;
+ import gnu.trove.map.hash.TIntObjectHashMap;
+ import gnu.trove.map.hash.TObjectIntHashMap;
+-import java.lang.reflect.Constructor;
+ import java.util.function.Supplier;
+-
+ import lombok.Data;
+ import lombok.Getter;
+ import net.md_5.bungee.protocol.packet.BossBar;
+@@ -506,7 +504,7 @@ public enum Protocol
+                 data.packetConstructors[mapping.packetID] = constructor;
+             }
+         }
+-        
++
+         final int getId(Class<? extends DefinedPacket> packet, int version)
+         {
+ 
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java b/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java
+index cd987c8a..55911163 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java
+@@ -65,12 +65,12 @@ public class ProtocolConstants
+ 
+     public static final boolean isBeforeOrEq(int before, int other)
+     {
+-            return before <= other;
++        return before <= other;
+     }
+ 
+     public static final boolean isAfterOrEq(int after, int other)
+     {
+-            return after >= other;
++        return after >= other;
+     }
+ 
+     public enum Direction
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/packet/PluginMessage.java b/protocol/src/main/java/net/md_5/bungee/protocol/packet/PluginMessage.java
+index 686c2d7a..fce8ddb9 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/packet/PluginMessage.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/packet/PluginMessage.java
+@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
+ import com.google.common.base.Predicate;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufUtil;
+-
+ import java.io.ByteArrayInputStream;
+ import java.io.DataInput;
+ import java.io.DataInputStream;
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java
+index 310f568c..0a429462 100644
+--- a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java
+@@ -25,4 +25,4 @@ public class StringUtil
+ 
+         return true;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+index 7ff1eb38..a10e60a5 100644
+--- a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+@@ -1,7 +1,6 @@
+ package me.jesfot.waterfallmc.altwaterfall.conf;
+ 
+ import java.io.File;
+-
+ import net.md_5.bungee.conf.Configuration;
+ import net.md_5.bungee.conf.YamlConfig;
+ import net.md_5.bungee.protocol.ProtocolConstants;
+@@ -16,7 +15,7 @@ public class WaterfallConfiguration extends Configuration
+         YamlConfig config = new YamlConfig( new File( "waterfall.yml" ) );
+         config.load( false ); // Load, but no permissions
+         gameVersion = config.getString( "game_version", "" ).isEmpty() ? String.join( ", ", ProtocolConstants.SUPPORTED_VERSIONS ) : config.getString( "game_version", "" );
+-        useNettyDnsResolver = config.getBoolean("use_netty_dns_resolver", useNettyDnsResolver);
++        useNettyDnsResolver = config.getBoolean( "use_netty_dns_resolver", useNettyDnsResolver );
+     }
+ 
+     /**
+@@ -42,4 +41,4 @@ public class WaterfallConfiguration extends Configuration
+     {
+         return useNettyDnsResolver;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/ConsoleCommandCompleter.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/ConsoleCommandCompleter.java
+index 766e1c9b..28ee7440 100644
+--- a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/ConsoleCommandCompleter.java
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/ConsoleCommandCompleter.java
+@@ -1,13 +1,12 @@
+ package me.jesfot.waterfallmc.altwaterfall.console;
+ 
++import java.util.List;
+ import net.md_5.bungee.api.ProxyServer;
+ import org.jline.reader.Candidate;
+ import org.jline.reader.Completer;
+ import org.jline.reader.LineReader;
+ import org.jline.reader.ParsedLine;
+ 
+-import java.util.List;
+-
+ final class ConsoleCommandCompleter implements Completer
+ {
+ 
+@@ -32,4 +31,4 @@ final class ConsoleCommandCompleter implements Completer
+             candidates.add( new Candidate( suggestion ) );
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/WaterfallConsole.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/WaterfallConsole.java
+index 2d14b1c5..dd0e4e08 100644
+--- a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/WaterfallConsole.java
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/console/WaterfallConsole.java
+@@ -39,4 +39,4 @@ public final class WaterfallConsole extends SimpleTerminalConsole
+     {
+         ProxyServer.getInstance().stop();
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+index fbf0a357..df697a8a 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+@@ -437,7 +437,7 @@ public class BungeeCord extends ProxyServer
+                 getLogger().info( "Closing IO threads" );
+                 bossEventLoopGroup.shutdownGracefully();
+                 workerEventLoopGroup.shutdownGracefully();
+-                while (true)
++                while ( true )
+                 {
+                     try
+                     {
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
+index 711270fc..6301e1c9 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
+@@ -116,7 +116,7 @@ public class BungeeServerInfo implements ServerInfo
+         {
+             server = ( players.isEmpty() ) ? null : players.iterator().next().getServer();
+         }
+-        
++
+         if ( server != null )
+         {
+             server.sendData( channel, data );
+diff --git a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java b/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
+index 39853515..5c6a5902 100644
+--- a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
++++ b/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
+@@ -4,9 +4,8 @@ import com.google.common.base.Preconditions;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToMessageDecoder;
+-import lombok.RequiredArgsConstructor;
+-
+ import java.util.List;
++import lombok.RequiredArgsConstructor;
+ import net.md_5.bungee.jni.zlib.BungeeZlib;
+ import net.md_5.bungee.protocol.DefinedPacket;
+ 
+diff --git a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+index 0e0bb9c5..79c1492b 100644
+--- a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
++++ b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+@@ -2,7 +2,6 @@ package net.md_5.bungee.conf;
+ 
+ import com.google.common.base.Preconditions;
+ import com.google.common.collect.ImmutableMap;
+-
+ import gnu.trove.map.TMap;
+ import java.io.File;
+ import java.io.IOException;
+@@ -137,7 +136,7 @@ public abstract class Configuration implements ProxyConfig
+                 }
+             }
+             oldServers.clear();
+-            
++
+             for ( ServerInfo removedServer : removedServers.values() )
+             {
+                 ProxyServer.getInstance().getLogger().info( "Moving players off of server: " + removedServer.getName() );
+@@ -152,18 +151,19 @@ public abstract class Configuration implements ProxyConfig
+                         player.disconnect( TextComponent.fromLegacyText( ProxyServer.getInstance().getTranslation( "fallback_kick", "Not found on reload" ) ) );
+                         continue;
+                     }
+-                    player.connect( destination, ( success, cause ) -> {
++                    player.connect( destination, ( success, cause ) ->
++                    {
+                         if ( !success )
+                         {
+-                            ProxyServer.getInstance().getLogger().log( Level.WARNING, "Failed to connect " + player.getName() + " to " + destination.getName(), cause);
++                            ProxyServer.getInstance().getLogger().log( Level.WARNING, "Failed to connect " + player.getName() + " to " + destination.getName(), cause );
+                             player.disconnect( TextComponent.fromLegacyText( ProxyServer.getInstance().getTranslation( "fallback_kick", cause.getCause().getClass().getName() ) ) );
+                         }
+-                    });
++                    } );
+                 }
+             }
+             removedServers.clear();
+ 
+-            servers = new CaseInsensitiveMap<>(newServers);
++            servers = new CaseInsensitiveMap<>( newServers );
+         }
+ 
+         for ( ListenerInfo listener : listeners )
+diff --git a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
+index 682979ac..7dd7fa9f 100644
+--- a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
++++ b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
+@@ -48,15 +48,15 @@ public class YamlConfig implements ConfigurationAdapter
+     private final Yaml yaml;
+     private Map<String, Object> config;
+     private final File file;
+-    
++
+     public YamlConfig()
+     {
+-    	this( new File( "config.yml" ) );
++        this( new File( "config.yml" ) );
+     }
+ 
+     public YamlConfig(File file)
+     {
+-    	this.file = file;
++        this.file = file;
+         DumperOptions options = new DumperOptions();
+         options.setDefaultFlowStyle( DumperOptions.FlowStyle.BLOCK );
+         yaml = new Yaml( options );
+@@ -65,9 +65,9 @@ public class YamlConfig implements ConfigurationAdapter
+     @Override
+     public void load()
+     {
+-    	load(true);
++        load( true );
+     }
+-    
++
+     public void load(boolean doPermissions)
+     {
+         try
+@@ -97,7 +97,10 @@ public class YamlConfig implements ConfigurationAdapter
+             throw new RuntimeException( "Could not load configuration!", ex );
+         }
+ 
+-        if(!doPermissions) return; // Waterfall
++        if ( !doPermissions )
++        {
++            return;
++        }
+         Map<String, Object> permissions = get( "permissions", null );
+         if ( permissions == null )
+         {
+diff --git a/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java b/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java
+index 619d65a7..603737d8 100644
+--- a/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java
++++ b/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java
+@@ -22,7 +22,6 @@ import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Objects;
+-
+ import lombok.RequiredArgsConstructor;
+ import net.md_5.bungee.ServerConnection;
+ import net.md_5.bungee.ServerConnection.KeepAliveData;
+diff --git a/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java b/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
+index 9bb48d5d..eb1d5693 100644
+--- a/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
++++ b/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
+@@ -5,11 +5,10 @@ import com.mojang.brigadier.context.StringRange;
+ import com.mojang.brigadier.suggestion.Suggestion;
+ import com.mojang.brigadier.suggestion.Suggestions;
+ import io.netty.channel.Channel;
+-import me.jesfot.waterfallmc.altwaterfall.StringUtil;
+-
+ import java.util.ArrayList;
+ import java.util.LinkedList;
+ import java.util.List;
++import me.jesfot.waterfallmc.altwaterfall.StringUtil;
+ import net.md_5.bungee.BungeeCord;
+ import net.md_5.bungee.ServerConnection.KeepAliveData;
+ import net.md_5.bungee.UserConnection;
+diff --git a/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java b/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
+index 9a2a92d1..de4c53f7 100644
+--- a/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
++++ b/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
+@@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpRequest;
+ import io.netty.handler.codec.http.HttpVersion;
+ import io.netty.resolver.dns.DefaultDnsServerAddressStreamProvider;
+ import io.netty.resolver.dns.DnsAddressResolverGroup;
+-
+ import java.net.InetAddress;
+ import java.net.InetSocketAddress;
+ import java.net.URI;
+@@ -82,8 +81,8 @@ public class HttpClient
+                 }
+             }
+         };
+-        
+-        if (ProxyServer.getInstance().getConfig().isUseNettyDnsResolver())
++
++        if ( ProxyServer.getInstance().getConfig().isUseNettyDnsResolver() )
+         {
+             getWithNettyResolver( eventLoop, uri, port, future, callback, ssl );
+         } else
+diff --git a/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java b/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java
+index b91981e6..33e6a6c9 100644
+--- a/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java
++++ b/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java
+@@ -16,7 +16,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<HttpObject>
+ {
+ 
+     private final Callback<String> callback;
+-    private final StringBuilder buffer = new StringBuilder(640);
++    private final StringBuilder buffer = new StringBuilder( 640 );
+ 
+     @Override
+     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
+diff --git a/proxy/src/main/java/net/md_5/bungee/module/JenkinsModuleSource.java b/proxy/src/main/java/net/md_5/bungee/module/JenkinsModuleSource.java
+index 174e8784..9b20d0df 100644
+--- a/proxy/src/main/java/net/md_5/bungee/module/JenkinsModuleSource.java
++++ b/proxy/src/main/java/net/md_5/bungee/module/JenkinsModuleSource.java
+@@ -5,7 +5,6 @@ import java.net.URL;
+ import java.net.URLConnection;
+ import java.nio.file.Files;
+ import java.nio.file.StandardCopyOption;
+-
+ import lombok.Data;
+ import net.md_5.bungee.Util;
+ 
+diff --git a/proxy/src/main/resources/messages.properties b/proxy/src/main/resources/messages.properties
+index 6e3ef0a4..bbdf9500 100644
+--- a/proxy/src/main/resources/messages.properties
++++ b/proxy/src/main/resources/messages.properties
+@@ -1,4 +1,4 @@
+-alert=\u00a78[\u00a74Alert\u00a78]\u00a7r 
++alert='\u00a78[\u00a74Alert\u00a78]\u00a7r '
+ already_connected=\u00a7cYou are already connected to this server!
+ already_connected_proxy=\u00a7cYou are already connected to this proxy!
+ already_connecting=\u00a7cAlready connecting to this server!
+@@ -16,8 +16,8 @@ outdated_client=Outdated client! Please use {0}
+ outdated_server=Outdated server! I'm still on {0}
+ proxy_full=Server is full!
+ restart=[Proxy] Proxy restarting.
+-server_kick=[Kicked] 
+-server_list=\u00a76You may connect to the following servers at this time: 
++server_kick='[Kicked] '
++server_list='\u00a76You may connect to the following servers at this time: '
+ server_went_down=\u00a7cThe server you were previously on went down, you have been connected to a fallback server
+ total_players=Total players online: {0}
+ name_too_long=Cannot have username longer than 16 characters
+-- 
+2.24.0.windows.2
+
