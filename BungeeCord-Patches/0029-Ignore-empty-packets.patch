@@ -1,0 +1,42 @@
+From c6e831d57dfc5dd9989d0a8f1d3be4463c7ebaf7 Mon Sep 17 00:00:00 2001
+From: Shane Freeder <theboyetronic@gmail.com>
+Date: Fri, 6 Mar 2020 00:10:47 +0530
+Subject: [PATCH] Ignore empty packets
+
+This patch puts the proxy more inline with the client in that empty
+packets will be ignored. While empty packets are a sign of bad plugins,
+they are effectivly harmless vs the cost of the exception in general
+
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/MinecraftDecoder.java b/protocol/src/main/java/net/md_5/bungee/protocol/MinecraftDecoder.java
+index c7054fca..5f897fe2 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/MinecraftDecoder.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/MinecraftDecoder.java
+@@ -28,6 +28,10 @@ public class MinecraftDecoder extends MessageToMessageDecoder<ByteBuf>
+         Object packetTypeInfo = null;
+         try
+         {
++            if ( in.readableBytes() == 0 )
++            {
++                return;
++            }
+             int packetId = DefinedPacket.readVarInt( in );
+             packetTypeInfo = packetId;
+ 
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java b/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
+index e903fd09..b867daad 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
+@@ -30,10 +30,6 @@ public class Varint21FrameDecoder extends ByteToMessageDecoder
+             if ( buf[i] >= 0 )
+             {
+                 int length = DefinedPacket.readVarInt( Unpooled.wrappedBuffer( buf ) );
+-                if ( length == 0 )
+-                {
+-                    throw new CorruptedFrameException( "Empty Packet!" );
+-                }
+ 
+                 if ( in.readableBytes() < length )
+                 {
+-- 
+2.24.0.windows.2
+

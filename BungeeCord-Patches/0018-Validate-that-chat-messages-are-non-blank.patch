@@ -1,0 +1,65 @@
+From 4b533986daeffb53d72d3fb354236c7e329af0cb Mon Sep 17 00:00:00 2001
+From: Tux <write@imaginarycode.com>
+Date: Thu, 5 Mar 2020 22:32:36 +0530
+Subject: [PATCH] Validate that chat messages are non-blank
+
+
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java
+new file mode 100644
+index 00000000..310f568c
+--- /dev/null
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/StringUtil.java
+@@ -0,0 +1,28 @@
++package me.jesfot.waterfallmc.altwaterfall;
++
++import lombok.AccessLevel;
++import lombok.NoArgsConstructor;
++
++@NoArgsConstructor(access = AccessLevel.PRIVATE)
++public class StringUtil
++{
++
++    public static boolean isBlank(String str)
++    {
++        if ( str.isEmpty() )
++        {
++            return true;
++        }
++
++        int l = str.length();
++        for ( int i = 0; i < l; i++ )
++        {
++            if ( !Character.isWhitespace( str.charAt( i ) ) )
++            {
++                return false;
++            }
++        }
++
++        return true;
++    }
++}
+\ No newline at end of file
+diff --git a/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java b/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
+index 6b888c85..9bb48d5d 100644
+--- a/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
++++ b/proxy/src/main/java/net/md_5/bungee/connection/UpstreamBridge.java
+@@ -5,6 +5,8 @@ import com.mojang.brigadier.context.StringRange;
+ import com.mojang.brigadier.suggestion.Suggestion;
+ import com.mojang.brigadier.suggestion.Suggestions;
+ import io.netty.channel.Channel;
++import me.jesfot.waterfallmc.altwaterfall.StringUtil;
++
+ import java.util.ArrayList;
+ import java.util.LinkedList;
+ import java.util.List;
+@@ -140,6 +142,7 @@ public class UpstreamBridge extends PacketHandler
+     {
+         int maxLength = ( con.getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_11 ) ? 256 : 100;
+         Preconditions.checkArgument( chat.getMessage().length() <= maxLength, "Chat message too long" ); // Mojang limit, check on updates
++        Preconditions.checkArgument( !StringUtil.isBlank( chat.getMessage() ), "Chat message is empty" );
+ 
+         ChatEvent chatEvent = new ChatEvent( con, con.getServer(), chat.getMessage() );
+         if ( !bungee.getPluginManager().callEvent( chatEvent ).isCancelled() )
+-- 
+2.24.0.windows.2
+

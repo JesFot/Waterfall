@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.waterfallmc</groupId>
-    <artifactId>waterfall-super</artifactId>
+    <groupId>me.jesfot.waterfallmc</groupId>
+    <artifactId>altwaterfall-super</artifactId>
     <version>dev-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Waterfall-Super</name>
-    <description>Super project for Waterfall.</description>
+    <name>AltWaterfall-Super</name>
+    <description>Super project for Waterfall (Alternative, personal use) (see https://papermc.io).</description>
     <url>https://github.com/WaterfallMC/Waterfall</url>
 
     <modules>

@@ -1,0 +1,98 @@
+From 74862353e71d8cb9a0c815e0ec61d1084fc72384 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
+Date: Thu, 5 Mar 2020 22:11:50 +0530
+Subject: [PATCH] Allow removing servers or changing addresses on reload
+
+Moves all players on the removed server to the default server.
+Address changes also move the players to the default server.
+Kicks players on failure to move.
+
+Original Issue: https://github.com/WaterfallMC/Waterfall-Old/issues/17
+
+diff --git a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+index 56a0f29c..a896f4f8 100644
+--- a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
++++ b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+@@ -6,6 +6,7 @@ import java.io.File;
+ import java.io.IOException;
+ import java.util.Arrays;
+ import java.util.Collection;
++import java.util.HashMap;
+ import java.util.Map;
+ import java.util.UUID;
+ import java.util.logging.Level;
+@@ -14,9 +15,11 @@ import lombok.Getter;
+ import net.md_5.bungee.api.Favicon;
+ import net.md_5.bungee.api.ProxyConfig;
+ import net.md_5.bungee.api.ProxyServer;
++import net.md_5.bungee.api.chat.TextComponent;
+ import net.md_5.bungee.api.config.ConfigurationAdapter;
+ import net.md_5.bungee.api.config.ListenerInfo;
+ import net.md_5.bungee.api.config.ServerInfo;
++import net.md_5.bungee.api.connection.ProxiedPlayer;
+ import net.md_5.bungee.util.CaseInsensitiveMap;
+ import net.md_5.bungee.util.CaseInsensitiveSet;
+ 
+@@ -111,20 +114,51 @@ public abstract class Configuration implements ProxyConfig
+             servers = new CaseInsensitiveMap<>( newServers );
+         } else
+         {
+-            for ( ServerInfo oldServer : servers.values() )
++            Map<String, ServerInfo> oldServers = servers;
++            Map<String, ServerInfo> removedServers = new HashMap<String, ServerInfo>();
++
++            for ( ServerInfo oldServer : oldServers.values() )
+             {
+-                // Don't allow servers to be removed
+-                Preconditions.checkArgument( newServers.containsKey( oldServer.getName() ), "Server %s removed on reload!", oldServer.getName() );
++                ServerInfo newServer = newServers.get( oldServer.getName() );
++                if ( ( newServer == null || !oldServer.getSocketAddress().equals( newServer.getSocketAddress() ) ) && !oldServer.getPlayers().isEmpty() )
++                {
++                    removedServers.put( oldServer.getName(), oldServer );
++                } else
++                {
++                    // This server isn't new or removed, we'll use Bungee's behavior of just ignoring
++                    // any changes to info outside of the address, this is not ideal, but the alternative
++                    // requires resetting multiple objects of which have no proper identity
++                    newServers.put( oldServer.getName(), oldServer );
++                }
+             }
+-
+-            // Add new servers
+-            for ( Map.Entry<String, ServerInfo> newServer : newServers.entrySet() )
++            oldServers.clear();
++            
++            for ( ServerInfo removedServer : removedServers.values() )
+             {
+-                if ( !servers.containsValue( newServer.getValue() ) )
++                ProxyServer.getInstance().getLogger().info( "Moving players off of server: " + removedServer.getName() );
++                for ( ProxiedPlayer player : removedServer.getPlayers() )
+                 {
+-                    servers.put( newServer.getKey(), newServer.getValue() );
++                    ListenerInfo listener = player.getPendingConnection().getListener();
++                    String destinationName = listener.getServerPriority().stream().filter( newServers::containsKey ).findFirst().orElse( null );
++                    ServerInfo destination = newServers.get( destinationName );
++                    if ( destination == null )
++                    {
++                        ProxyServer.getInstance().getLogger().severe( "Couldn't find any server to put player " + player.getName() + " on" );
++                        player.disconnect( TextComponent.fromLegacyText( ProxyServer.getInstance().getTranslation( "fallback_kick", "Not found on reload" ) ) );
++                        continue;
++                    }
++                    player.connect( destination, ( success, cause ) -> {
++                        if ( !success )
++                        {
++                            ProxyServer.getInstance().getLogger().log( Level.WARNING, "Failed to connect " + player.getName() + " to " + destination.getName(), cause);
++                            player.disconnect( TextComponent.fromLegacyText( ProxyServer.getInstance().getTranslation( "fallback_kick", cause.getCause().getClass().getName() ) ) );
++                        }
++                    });
+                 }
+             }
++            removedServers.clear();
++
++            servers = new CaseInsensitiveMap<>(newServers);
+         }
+ 
+         for ( ListenerInfo listener : listeners )
+-- 
+2.24.0.windows.2
+

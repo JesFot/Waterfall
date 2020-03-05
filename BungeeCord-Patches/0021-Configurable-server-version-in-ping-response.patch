@@ -1,0 +1,72 @@
+From c6830eadd22063054f58b3946fc20ee8bf042862 Mon Sep 17 00:00:00 2001
+From: Troy Frew <fuzzy_bot@arenaga.me>
+Date: Thu, 5 Mar 2020 23:18:30 +0530
+Subject: [PATCH] Configurable server version in ping response
+
+
+diff --git a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+index ac498b51..34d6c98f 100644
+--- a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
++++ b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+@@ -133,6 +133,13 @@ public interface ProxyConfig
+     // AltWaterfall Options
+     //
+ 
++    /**
++     * The supported versions
++     *
++     * @return the supported versions
++     */
++    String getGameVersion();
++
+     /**
+      * Return all servers registered to this proxy, keyed by name. The returned map
+      * is an immutable snapshot of the actual server collection. It cannot be modified,
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+index a717ce60..799bbca5 100644
+--- a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+@@ -4,6 +4,7 @@ import java.io.File;
+ 
+ import net.md_5.bungee.conf.Configuration;
+ import net.md_5.bungee.conf.YamlConfig;
++import net.md_5.bungee.protocol.ProtocolConstants;
+ 
+ public class WaterfallConfiguration extends Configuration
+ {
+@@ -14,5 +15,18 @@ public class WaterfallConfiguration extends Configuration
+         super.load();
+         YamlConfig config = new YamlConfig( new File( "waterfall.yml" ) );
+         config.load( false ); // Load, but no permissions
++        gameVersion = config.getString( "game_version", "" ).isEmpty() ? String.join( ", ", ProtocolConstants.SUPPORTED_VERSIONS ) : config.getString( "game_version", "" );
++    }
++
++    /**
++     * The supported versions displayed to the client
++     * <p>Default is a comma separated list of supported versions. For example 1.8.x, 1.9.x, 1.10.x</p>
++     */
++    private String gameVersion;
++
++    @Override
++    public String getGameVersion()
++    {
++        return gameVersion;
+     }
+ }
+\ No newline at end of file
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+index 3348ef88..b411aaa7 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+@@ -652,7 +652,7 @@ public class BungeeCord extends ProxyServer
+     @Override
+     public String getGameVersion()
+     {
+-        return ProtocolConstants.SUPPORTED_VERSIONS.get( 0 ) + "-" + ProtocolConstants.SUPPORTED_VERSIONS.get( ProtocolConstants.SUPPORTED_VERSIONS.size() - 1 );
++        return config.getGameVersion();
+     }
+ 
+     @Override
+-- 
+2.24.0.windows.2
+

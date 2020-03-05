@@ -1,0 +1,60 @@
+From be46a68bca7142a0edbc6eaaacc7d7f611adaf4c Mon Sep 17 00:00:00 2001
+From: Techcable <Techcable@techcable.net>
+Date: Thu, 5 Mar 2020 22:29:55 +0530
+Subject: [PATCH] Better Decompression Sanity
+
+Fixes #40
+
+diff --git a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java b/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
+index 21b3ea2b..39853515 100644
+--- a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
++++ b/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
+@@ -4,13 +4,17 @@ import com.google.common.base.Preconditions;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToMessageDecoder;
++import lombok.RequiredArgsConstructor;
++
+ import java.util.List;
+ import net.md_5.bungee.jni.zlib.BungeeZlib;
+ import net.md_5.bungee.protocol.DefinedPacket;
+ 
++@RequiredArgsConstructor
+ public class PacketDecompressor extends MessageToMessageDecoder<ByteBuf>
+ {
+ 
++    private final int compressionThreshold;
+     private final BungeeZlib zlib = CompressFactory.zlib.newInstance();
+ 
+     @Override
+@@ -35,12 +39,13 @@ public class PacketDecompressor extends MessageToMessageDecoder<ByteBuf>
+             in.skipBytes( in.readableBytes() );
+         } else
+         {
++            Preconditions.checkArgument( size >= compressionThreshold, "Decompressed size %s less than compression threshold %s", size, compressionThreshold );
+             ByteBuf decompressed = ctx.alloc().directBuffer();
+ 
+             try
+             {
+                 zlib.process( in, decompressed );
+-                Preconditions.checkState( decompressed.readableBytes() == size, "Decompressed packet size mismatch" );
++                Preconditions.checkArgument( decompressed.readableBytes() == size, "Decompressed size %s is not equal to actual decompressed bytes", size, decompressed.readableBytes() );
+ 
+                 out.add( decompressed );
+                 decompressed = null;
+diff --git a/proxy/src/main/java/net/md_5/bungee/netty/ChannelWrapper.java b/proxy/src/main/java/net/md_5/bungee/netty/ChannelWrapper.java
+index 6be2d942..844daddb 100644
+--- a/proxy/src/main/java/net/md_5/bungee/netty/ChannelWrapper.java
++++ b/proxy/src/main/java/net/md_5/bungee/netty/ChannelWrapper.java
+@@ -138,7 +138,7 @@ public class ChannelWrapper
+ 
+         if ( ch.pipeline().get( PacketDecompressor.class ) == null && compressionThreshold != -1 )
+         {
+-            addBefore( PipelineUtils.PACKET_DECODER, "decompress", new PacketDecompressor() );
++            addBefore( PipelineUtils.PACKET_DECODER, "decompress", new PacketDecompressor( compressionThreshold ) );
+         }
+         if ( compressionThreshold == -1 )
+         {
+-- 
+2.24.0.windows.2
+

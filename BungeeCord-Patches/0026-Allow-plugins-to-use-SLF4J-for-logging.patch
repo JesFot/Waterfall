@@ -1,0 +1,57 @@
+From c47f508b20bb29c098018d761c09db7505021cd6 Mon Sep 17 00:00:00 2001
+From: Minecrell <minecrell@minecrell.net>
+Date: Thu, 5 Mar 2020 23:56:38 +0530
+Subject: [PATCH] Allow plugins to use SLF4J for logging
+
+
+diff --git a/api/pom.xml b/api/pom.xml
+index 1e8633ce..f97cad02 100644
+--- a/api/pom.xml
++++ b/api/pom.xml
+@@ -54,5 +54,10 @@
+             <version>1.25</version>
+             <scope>compile</scope>
+         </dependency>
++        <dependency>
++            <groupId>org.slf4j</groupId>
++            <artifactId>slf4j-api</artifactId>
++            <version>1.7.25</version>
++        </dependency>
+     </dependencies>
+ </project>
+diff --git a/api/src/main/java/net/md_5/bungee/api/plugin/Plugin.java b/api/src/main/java/net/md_5/bungee/api/plugin/Plugin.java
+index 69cad3f8..65661840 100644
+--- a/api/src/main/java/net/md_5/bungee/api/plugin/Plugin.java
++++ b/api/src/main/java/net/md_5/bungee/api/plugin/Plugin.java
+@@ -44,6 +44,11 @@ public class Plugin
+         // init( proxy, description );
+     }
+ 
++    public org.slf4j.Logger getSLF4JLogger()
++    {
++        return org.slf4j.LoggerFactory.getLogger( logger.getName() );
++    }
++
+     /**
+      * Called when the plugin has just been loaded. Most of the proxy will not
+      * be initialized, so only use it for registering
+diff --git a/log4j/pom.xml b/log4j/pom.xml
+index 82b7f01c..496a3b17 100644
+--- a/log4j/pom.xml
++++ b/log4j/pom.xml
+@@ -37,6 +37,12 @@
+             <artifactId>log4j-jul</artifactId>
+             <version>${log4j2.version}</version>
+         </dependency>
++        <dependency>
++            <groupId>org.apache.logging.log4j</groupId>
++            <artifactId>log4j-slf4j-impl</artifactId>
++            <version>${log4j2.version}</version>
++            <scope>runtime</scope>
++        </dependency>
+         <dependency>
+             <groupId>com.lmax</groupId>
+             <artifactId>disruptor</artifactId>
+-- 
+2.24.0.windows.2
+

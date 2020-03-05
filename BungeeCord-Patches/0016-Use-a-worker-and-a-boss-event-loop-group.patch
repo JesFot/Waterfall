@@ -1,0 +1,88 @@
+From c01fd547b271b210a7abd3b873e048b4eb857173 Mon Sep 17 00:00:00 2001
+From: kamcio96 <k.nadworski@icloud.com>
+Date: Thu, 5 Mar 2020 22:27:43 +0530
+Subject: [PATCH] Use a worker and a boss event loop group.
+
+This is proper practice for netty.
+
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+index 48333da2..d96003a0 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+@@ -117,7 +117,7 @@ public class BungeeCord extends ProxyServer
+      */
+     private ResourceBundle baseBundle;
+     private ResourceBundle customBundle;
+-    public EventLoopGroup eventLoops;
++    public EventLoopGroup bossEventLoopGroup, workerEventLoopGroup;
+     /**
+      * locations.yml save thread.
+      */
+@@ -252,7 +252,8 @@ public class BungeeCord extends ProxyServer
+             ResourceLeakDetector.setLevel( ResourceLeakDetector.Level.DISABLED ); // Eats performance
+         }
+ 
+-        eventLoops = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty IO Thread #%1$d" ).build() );
++        bossEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Boss IO Thread #%1$d" ).build() );
++        workerEventLoopGroup = PipelineUtils.newEventLoopGroup( 0, new ThreadFactoryBuilder().setNameFormat( "Netty Worker IO Thread #%1$d" ).build() );
+ 
+         File moduleDirectory = new File( "modules" );
+         moduleManager.load( this, moduleDirectory );
+@@ -331,7 +332,7 @@ public class BungeeCord extends ProxyServer
+                     .option( ChannelOption.SO_REUSEADDR, true ) // TODO: Move this elsewhere!
+                     .childAttr( PipelineUtils.LISTENER, info )
+                     .childHandler( PipelineUtils.SERVER_CHILD )
+-                    .group( eventLoops )
++                    .group( bossEventLoopGroup, workerEventLoopGroup )
+                     .localAddress( info.getSocketAddress() )
+                     .bind().addListener( listener );
+ 
+@@ -354,7 +355,7 @@ public class BungeeCord extends ProxyServer
+                         }
+                     }
+                 };
+-                new RemoteQuery( this, info ).start( PipelineUtils.getDatagramChannel(), new InetSocketAddress( info.getHost().getAddress(), info.getQueryPort() ), eventLoops, bindListener );
++                new RemoteQuery( this, info ).start( PipelineUtils.getDatagramChannel(), new InetSocketAddress( info.getHost().getAddress(), info.getQueryPort() ), workerEventLoopGroup, bindListener );
+             }
+         }
+     }
+@@ -448,12 +449,18 @@ public class BungeeCord extends ProxyServer
+                 }
+ 
+                 getLogger().info( "Closing IO threads" );
+-                eventLoops.shutdownGracefully();
+-                try
+-                {
+-                    eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
+-                } catch ( InterruptedException ex )
++                bossEventLoopGroup.shutdownGracefully();
++                workerEventLoopGroup.shutdownGracefully();
++                while (true)
+                 {
++                    try
++                    {
++                        bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
++                        workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
++                        break;
++                    } catch ( InterruptedException ex )
++                    {
++                    }
+                 }
+ 
+                 getLogger().info( "Thank you and goodbye" );
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
+index aed3b23d..711270fc 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
+@@ -184,7 +184,7 @@ public class BungeeServerInfo implements ServerInfo
+         };
+         new Bootstrap()
+                 .channel( PipelineUtils.getChannel( socketAddress ) )
+-                .group( BungeeCord.getInstance().eventLoops )
++                .group( BungeeCord.getInstance().workerEventLoopGroup )
+                 .handler( PipelineUtils.BASE )
+                 .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, BungeeCord.getInstance().getConfig().getRemotePingTimeout() )
+                 .remoteAddress( socketAddress )
+-- 
+2.24.0.windows.2
+

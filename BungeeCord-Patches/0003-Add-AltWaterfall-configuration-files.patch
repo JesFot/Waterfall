@@ -1,0 +1,124 @@
+From 787e6a22773fd3bd4ab511435c5010ce1c512633 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
+Date: Thu, 5 Mar 2020 21:09:37 +0530
+Subject: [PATCH] Add AltWaterfall configuration files
+
+
+diff --git a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+index 2e41b4c4..af18d8fd 100644
+--- a/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
++++ b/api/src/main/java/net/md_5/bungee/api/ProxyConfig.java
+@@ -125,4 +125,9 @@ public interface ProxyConfig
+      * @return favicon
+      */
+     Favicon getFaviconObject();
++
++    //
++    // AltWaterfall Options
++    //
++
+ }
+diff --git a/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+new file mode 100644
+index 00000000..f30d72fc
+--- /dev/null
++++ b/proxy/src/main/java/me/jesfot/waterfallmc/altwaterfall/conf/WaterfallConfiguration.java
+@@ -0,0 +1,17 @@
++package me.jesfot.waterfallmc.altwaterfall.conf;
++
++import java.io.File;
++
++import net.md_5.bungee.conf.Configuration;
++import net.md_5.bungee.conf.YamlConfig;
++
++public class WaterfallConfiguration extends Configuration {
++
++    @Override
++    public void load() {
++        super.load();
++        YamlConfig config = new YamlConfig(new File("waterfall.yml"));
++        config.load(false); // Load, but no permissions
++    }
++
++}
+\ No newline at end of file
+diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+index 4824acf4..2cf4b006 100644
+--- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
++++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
+@@ -48,6 +48,7 @@ import jline.console.ConsoleReader;
+ import lombok.Getter;
+ import lombok.Setter;
+ import lombok.Synchronized;
++import me.jesfot.waterfallmc.altwaterfall.conf.WaterfallConfiguration;
+ import net.md_5.bungee.api.CommandSender;
+ import net.md_5.bungee.api.Favicon;
+ import net.md_5.bungee.api.ProxyServer;
+@@ -110,7 +111,7 @@ public class BungeeCord extends ProxyServer
+      * Configuration.
+      */
+     @Getter
+-    public final Configuration config = new Configuration();
++    public final Configuration config = new WaterfallConfiguration();
+     /**
+      * Localization bundle.
+      */
+diff --git a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+index e1a6b2b3..56a0f29c 100644
+--- a/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
++++ b/proxy/src/main/java/net/md_5/bungee/conf/Configuration.java
+@@ -24,7 +24,7 @@ import net.md_5.bungee.util.CaseInsensitiveSet;
+  * Core configuration for the proxy.
+  */
+ @Getter
+-public class Configuration implements ProxyConfig
++public abstract class Configuration implements ProxyConfig
+ {
+ 
+     /**
+diff --git a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
+index e65558ad..682979ac 100644
+--- a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
++++ b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
+@@ -47,10 +47,16 @@ public class YamlConfig implements ConfigurationAdapter
+     }
+     private final Yaml yaml;
+     private Map<String, Object> config;
+-    private final File file = new File( "config.yml" );
+-
++    private final File file;
++    
+     public YamlConfig()
+     {
++    	this( new File( "config.yml" ) );
++    }
++
++    public YamlConfig(File file)
++    {
++    	this.file = file;
+         DumperOptions options = new DumperOptions();
+         options.setDefaultFlowStyle( DumperOptions.FlowStyle.BLOCK );
+         yaml = new Yaml( options );
+@@ -58,6 +64,11 @@ public class YamlConfig implements ConfigurationAdapter
+ 
+     @Override
+     public void load()
++    {
++    	load(true);
++    }
++    
++    public void load(boolean doPermissions)
+     {
+         try
+         {
+@@ -86,6 +97,7 @@ public class YamlConfig implements ConfigurationAdapter
+             throw new RuntimeException( "Could not load configuration!", ex );
+         }
+ 
++        if(!doPermissions) return; // Waterfall
+         Map<String, Object> permissions = get( "permissions", null );
+         if ( permissions == null )
+         {
+-- 
+2.24.0.windows.2
+

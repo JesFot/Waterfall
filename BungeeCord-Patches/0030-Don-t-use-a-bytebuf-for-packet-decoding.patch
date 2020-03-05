@@ -1,0 +1,78 @@
+From 1dbe900efdb01e115d87f27857f7c5580b3d47a3 Mon Sep 17 00:00:00 2001
+From: creeper123123321 <creeper123123321@gmail.com>
+Date: Fri, 6 Mar 2020 00:14:59 +0530
+Subject: [PATCH] Don't use a bytebuf for packet decoding
+
+
+diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java b/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
+index b867daad..1c3a1641 100644
+--- a/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
++++ b/protocol/src/main/java/net/md_5/bungee/protocol/Varint21FrameDecoder.java
+@@ -1,7 +1,6 @@
+ package net.md_5.bungee.protocol;
+ 
+ import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.Unpooled;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.ByteToMessageDecoder;
+ import io.netty.handler.codec.CorruptedFrameException;
+@@ -10,15 +9,12 @@ import java.util.List;
+ public class Varint21FrameDecoder extends ByteToMessageDecoder
+ {
+ 
+-    private static boolean DIRECT_WARNING;
+-
+     @Override
+     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception
+     {
+         in.markReaderIndex();
+ 
+-        final byte[] buf = new byte[ 3 ];
+-        for ( int i = 0; i < buf.length; i++ )
++        for ( int i = 0; i < 3; i++ )
+         {
+             if ( !in.isReadable() )
+             {
+@@ -26,10 +22,11 @@ public class Varint21FrameDecoder extends ByteToMessageDecoder
+                 return;
+             }
+ 
+-            buf[i] = in.readByte();
+-            if ( buf[i] >= 0 )
++            byte read = in.readByte();
++            if ( read >= 0 )
+             {
+-                int length = DefinedPacket.readVarInt( Unpooled.wrappedBuffer( buf ) );
++                in.resetReaderIndex();
++                int length = DefinedPacket.readVarInt( in );
+ 
+                 if ( in.readableBytes() < length )
+                 {
+@@ -37,23 +34,7 @@ public class Varint21FrameDecoder extends ByteToMessageDecoder
+                     return;
+                 } else
+                 {
+-                    if ( in.hasMemoryAddress() )
+-                    {
+-                        out.add( in.slice( in.readerIndex(), length ).retain() );
+-                        in.skipBytes( length );
+-                    } else
+-                    {
+-                        if ( !DIRECT_WARNING )
+-                        {
+-                            DIRECT_WARNING = true;
+-                            System.out.println( "Netty is not using direct IO buffers." );
+-                        }
+-
+-                        // See https://github.com/SpigotMC/BungeeCord/issues/1717
+-                        ByteBuf dst = ctx.alloc().directBuffer( length );
+-                        in.readBytes( dst );
+-                        out.add( dst );
+-                    }
++                    out.add( in.readRetainedSlice( length ) );
+                     return;
+                 }
+             }
+-- 
+2.24.0.windows.2
+
