@@ -1,4 +1,4 @@
-From 0600f5d12eae50b3ced628572d97fa0c76e1b339 Mon Sep 17 00:00:00 2001
+From 9107ef1fb521b839801e848df8c12a9fc72bcb49 Mon Sep 17 00:00:00 2001
 From: Minecrell <minecrell@minecrell.net>
 Date: Thu, 5 Mar 2020 23:51:56 +0530
 Subject: [PATCH] Use Log4j2 for logging and TerminalConsoleAppender for
@@ -414,21 +414,22 @@ index b411aaa7..fbf0a357 100644
          pluginManager = new PluginManager( this );
          getPluginManager().registerCommand( null, new CommandReload() );
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java
-index 59611c2f..2b14ca81 100644
+index 59611c2f..b8fc21f0 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCordLauncher.java
-@@ -8,10 +8,7 @@ import java.util.Date;
+@@ -8,10 +8,8 @@ import java.util.Date;
  import java.util.concurrent.TimeUnit;
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
 -import net.md_5.bungee.api.ChatColor;
++import me.jesfot.waterfallmc.altwaterfall.console.WaterfallConsole;
  import net.md_5.bungee.api.ProxyServer;
 -import net.md_5.bungee.api.chat.ComponentBuilder;
 -import net.md_5.bungee.command.ConsoleCommandSender;
  
  public class BungeeCordLauncher
  {
-@@ -63,14 +60,6 @@ public class BungeeCordLauncher
+@@ -63,14 +61,7 @@ public class BungeeCordLauncher
  
          if ( !options.has( "noconsole" ) )
          {
@@ -440,6 +441,7 @@ index 59611c2f..2b14ca81 100644
 -                    bungee.getConsole().sendMessage( new ComponentBuilder( "Command not found" ).color( ChatColor.RED ).create() );
 -                }
 -            }
++            ( new WaterfallConsole() ).start();
          }
      }
  }
