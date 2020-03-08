@@ -1,4 +1,4 @@
-From 9107ef1fb521b839801e848df8c12a9fc72bcb49 Mon Sep 17 00:00:00 2001
+From 53b17cde5420d9c753e41ebd6c1f7f5a85f7a02f Mon Sep 17 00:00:00 2001
 From: Minecrell <minecrell@minecrell.net>
 Date: Thu, 5 Mar 2020 23:51:56 +0530
 Subject: [PATCH] Use Log4j2 for logging and TerminalConsoleAppender for
@@ -341,7 +341,7 @@ index 00000000..e0506c45
 +}
 \ No newline at end of file
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index b411aaa7..fbf0a357 100644
+index 15401f2d..b6eaa57a 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 @@ -21,7 +21,6 @@ import io.netty.util.ResourceLeakDetector;
@@ -352,7 +352,7 @@ index b411aaa7..fbf0a357 100644
  import java.net.InetSocketAddress;
  import java.net.SocketAddress;
  import java.text.MessageFormat;
-@@ -44,11 +43,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
+@@ -45,11 +44,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  import java.util.logging.Handler;
  import java.util.logging.Level;
  import java.util.logging.Logger;
@@ -365,7 +365,7 @@ index b411aaa7..fbf0a357 100644
  import net.md_5.bungee.api.CommandSender;
  import net.md_5.bungee.api.Favicon;
  import net.md_5.bungee.api.ProxyServer;
-@@ -78,14 +77,11 @@ import net.md_5.bungee.command.CommandEnd;
+@@ -79,14 +78,11 @@ import net.md_5.bungee.command.CommandEnd;
  import net.md_5.bungee.command.CommandIP;
  import net.md_5.bungee.command.CommandPerms;
  import net.md_5.bungee.command.CommandReload;
@@ -380,7 +380,7 @@ index b411aaa7..fbf0a357 100644
  import net.md_5.bungee.module.ModuleManager;
  import net.md_5.bungee.netty.PipelineUtils;
  import net.md_5.bungee.protocol.DefinedPacket;
-@@ -95,7 +91,6 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
+@@ -96,7 +92,6 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
  import net.md_5.bungee.query.RemoteQuery;
  import net.md_5.bungee.scheduler.BungeeScheduler;
  import net.md_5.bungee.util.CaseInsensitiveMap;
@@ -388,7 +388,7 @@ index b411aaa7..fbf0a357 100644
  
  /**
   * Main BungeeCord proxy class.
-@@ -151,8 +146,6 @@ public class BungeeCord extends ProxyServer
+@@ -157,8 +152,6 @@ public class BungeeCord extends ProxyServer
      @Getter
      private final BungeeScheduler scheduler = new BungeeScheduler();
      @Getter
@@ -397,7 +397,7 @@ index b411aaa7..fbf0a357 100644
      private final Logger logger;
      public final Gson gson = new GsonBuilder()
              .registerTypeAdapter( BaseComponent.class, new ComponentSerializer() )
-@@ -202,14 +195,7 @@ public class BungeeCord extends ProxyServer
+@@ -208,14 +201,7 @@ public class BungeeCord extends ProxyServer
          // BungeeCord. This version is only used when extracting the libraries to their temp folder.
          System.setProperty( "library.jansi.version", "BungeeCord" );
  

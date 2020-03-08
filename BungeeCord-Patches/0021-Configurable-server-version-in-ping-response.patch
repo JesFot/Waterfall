@@ -1,4 +1,4 @@
-From c6830eadd22063054f58b3946fc20ee8bf042862 Mon Sep 17 00:00:00 2001
+From 8b777421621d7e32cca3c7d3d3d5b164cbd01530 Mon Sep 17 00:00:00 2001
 From: Troy Frew <fuzzy_bot@arenaga.me>
 Date: Thu, 5 Mar 2020 23:18:30 +0530
 Subject: [PATCH] Configurable server version in ping response
@@ -55,10 +55,10 @@ index a717ce60..799bbca5 100644
  }
 \ No newline at end of file
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index 3348ef88..b411aaa7 100644
+index 17b799d0..15401f2d 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -652,7 +652,7 @@ public class BungeeCord extends ProxyServer
+@@ -687,7 +687,7 @@ public class BungeeCord extends ProxyServer
      @Override
      public String getGameVersion()
      {

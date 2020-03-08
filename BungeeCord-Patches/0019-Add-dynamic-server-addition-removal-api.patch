@@ -1,4 +1,4 @@
-From e22ef5ccfb5476a1f138c4d8770202f7549a70f9 Mon Sep 17 00:00:00 2001
+From cc56f387d7f26e2b19e12e0faa6e476de302d503 Mon Sep 17 00:00:00 2001
 From: Troy Frew <fuzzy_bot@arenaga.me>
 Date: Thu, 5 Mar 2020 22:47:10 +0530
 Subject: [PATCH] Add dynamic server addition/removal api.
@@ -184,10 +184,10 @@ index f30d72fc..a717ce60 100644
  }
 \ No newline at end of file
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index d96003a0..3348ef88 100644
+index ad543482..17b799d0 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -600,10 +600,16 @@ public class BungeeCord extends ProxyServer
+@@ -635,10 +635,16 @@ public class BungeeCord extends ProxyServer
          return config.getServers();
      }
  

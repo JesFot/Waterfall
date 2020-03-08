@@ -1,4 +1,4 @@
-From c01fd547b271b210a7abd3b873e048b4eb857173 Mon Sep 17 00:00:00 2001
+From 7be8025489926dcb7ce319e621ab2ce46fd348a1 Mon Sep 17 00:00:00 2001
 From: kamcio96 <k.nadworski@icloud.com>
 Date: Thu, 5 Mar 2020 22:27:43 +0530
 Subject: [PATCH] Use a worker and a boss event loop group.
@@ -6,10 +6,10 @@ Subject: [PATCH] Use a worker and a boss event loop group.
 This is proper practice for netty.
 
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index 48333da2..d96003a0 100644
+index 721d8a94..ad543482 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -117,7 +117,7 @@ public class BungeeCord extends ProxyServer
+@@ -118,7 +118,7 @@ public class BungeeCord extends ProxyServer
       */
      private ResourceBundle baseBundle;
      private ResourceBundle customBundle;
@@ -18,7 +18,7 @@ index 48333da2..d96003a0 100644
      /**
       * locations.yml save thread.
       */
-@@ -252,7 +252,8 @@ public class BungeeCord extends ProxyServer
+@@ -258,7 +258,8 @@ public class BungeeCord extends ProxyServer
              ResourceLeakDetector.setLevel( ResourceLeakDetector.Level.DISABLED ); // Eats performance
          }
  
@@ -28,7 +28,7 @@ index 48333da2..d96003a0 100644
  
          File moduleDirectory = new File( "modules" );
          moduleManager.load( this, moduleDirectory );
-@@ -331,7 +332,7 @@ public class BungeeCord extends ProxyServer
+@@ -346,7 +347,7 @@ public class BungeeCord extends ProxyServer
                      .option( ChannelOption.SO_REUSEADDR, true ) // TODO: Move this elsewhere!
                      .childAttr( PipelineUtils.LISTENER, info )
                      .childHandler( PipelineUtils.SERVER_CHILD )
@@ -37,7 +37,7 @@ index 48333da2..d96003a0 100644
                      .localAddress( info.getSocketAddress() )
                      .bind().addListener( listener );
  
-@@ -354,7 +355,7 @@ public class BungeeCord extends ProxyServer
+@@ -369,7 +370,7 @@ public class BungeeCord extends ProxyServer
                          }
                      }
                  };
@@ -46,30 +46,30 @@ index 48333da2..d96003a0 100644
              }
          }
      }
-@@ -448,12 +449,18 @@ public class BungeeCord extends ProxyServer
-                 }
+@@ -477,12 +478,18 @@ public class BungeeCord extends ProxyServer
+         }
  
-                 getLogger().info( "Closing IO threads" );
--                eventLoops.shutdownGracefully();
--                try
--                {
--                    eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
--                } catch ( InterruptedException ex )
-+                bossEventLoopGroup.shutdownGracefully();
-+                workerEventLoopGroup.shutdownGracefully();
-+                while (true)
-                 {
-+                    try
-+                    {
-+                        bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
-+                        workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
-+                        break;
-+                    } catch ( InterruptedException ex )
-+                    {
-+                    }
-                 }
+         getLogger().info( "Closing IO threads" );
+-        eventLoops.shutdownGracefully();
+-        try
+-        {
+-            eventLoops.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
+-        } catch ( InterruptedException ex )
++        bossEventLoopGroup.shutdownGracefully();
++        workerEventLoopGroup.shutdownGracefully();
++        while ( true )
+         {
++            try
++            {
++                bossEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
++                workerEventLoopGroup.awaitTermination( Long.MAX_VALUE, TimeUnit.NANOSECONDS );
++                break;
++            } catch ( InterruptedException ex )
++            {
++            }
+         }
  
-                 getLogger().info( "Thank you and goodbye" );
+         getLogger().info( "Thank you and goodbye" );
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
 index aed3b23d..711270fc 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java

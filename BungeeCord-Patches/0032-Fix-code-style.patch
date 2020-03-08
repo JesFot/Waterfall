@@ -1,6 +1,6 @@
-From e3538b375c625b7332afd59bb68aca97e0961015 Mon Sep 17 00:00:00 2001
+From 56b36a9747c7a659985ae950e434ecf5997ed1ff Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
-Date: Fri, 6 Mar 2020 02:27:58 +0530
+Date: Sun, 8 Mar 2020 18:26:29 +0530
 Subject: [PATCH] Fix code style
 
 
@@ -45,10 +45,10 @@ index e81f5314..8ea1f787 100644
 \ No newline at end of file
 +}
 diff --git a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
-index 298a87fc..21557b37 100644
+index 298a87fc..5e199a03 100644
 --- a/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
 +++ b/api/src/main/java/me/jesfot/waterfallmc/altwaterfall/utils/UUIDUtils.java
-@@ -1,13 +1,15 @@
+@@ -1,13 +1,14 @@
  package me.jesfot.waterfallmc.altwaterfall.utils;
 -import java.util.UUID;
  
@@ -59,7 +59,7 @@ index 298a87fc..21557b37 100644
 -public class UUIDUtils
 +public final class UUIDUtils
  {
- 
+-
 -    private UUIDUtils() {}
 +    private UUIDUtils()
 +    {
@@ -67,7 +67,7 @@ index 298a87fc..21557b37 100644
  
      public static String undash(String id)
      {
-@@ -50,7 +52,7 @@ public class UUIDUtils
+@@ -50,7 +51,7 @@ public class UUIDUtils
          try
          {
              return fromBytes( Hex.decode( s ) );
@@ -76,7 +76,7 @@ index 298a87fc..21557b37 100644
          {
              throw new IllegalArgumentException( "Invalid UUID: " + s );
          }
-@@ -88,4 +90,4 @@ public class UUIDUtils
+@@ -88,4 +89,4 @@ public class UUIDUtils
                  bytes[12], bytes[13], bytes[14], bytes[15] );
          return new UUID( msb, lsb );
      }
@@ -251,29 +251,6 @@ index b37a8909..3b3525f0 100644
 +        </Root>
 +    </Loggers>
 +</Configuration>
-diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java b/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
-index adcb8606..ebfdfa16 100644
---- a/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
-+++ b/protocol/src/main/java/net/md_5/bungee/protocol/Protocol.java
-@@ -6,9 +6,7 @@ import gnu.trove.map.TIntObjectMap;
- import gnu.trove.map.TObjectIntMap;
- import gnu.trove.map.hash.TIntObjectHashMap;
- import gnu.trove.map.hash.TObjectIntHashMap;
--import java.lang.reflect.Constructor;
- import java.util.function.Supplier;
--
- import lombok.Data;
- import lombok.Getter;
- import net.md_5.bungee.protocol.packet.BossBar;
-@@ -506,7 +504,7 @@ public enum Protocol
-                 data.packetConstructors[mapping.packetID] = constructor;
-             }
-         }
--        
-+
-         final int getId(Class<? extends DefinedPacket> packet, int version)
-         {
- 
 diff --git a/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java b/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java
 index cd987c8a..55911163 100644
 --- a/protocol/src/main/java/net/md_5/bungee/protocol/ProtocolConstants.java
@@ -381,23 +358,19 @@ index 2d14b1c5..dd0e4e08 100644
 -}
 \ No newline at end of file
 +}
-diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index fbf0a357..df697a8a 100644
---- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-+++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -437,7 +437,7 @@ public class BungeeCord extends ProxyServer
-                 getLogger().info( "Closing IO threads" );
-                 bossEventLoopGroup.shutdownGracefully();
-                 workerEventLoopGroup.shutdownGracefully();
--                while (true)
-+                while ( true )
-                 {
-                     try
-                     {
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
-index 711270fc..6301e1c9 100644
+index 711270fc..6a8184f5 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeServerInfo.java
+@@ -35,7 +35,7 @@ import net.md_5.bungee.protocol.packet.PluginMessage;
+ @RequiredArgsConstructor
+ @ToString(of =
+ {
+-    "name", "socketAddress", "restricted"
++        "name", "socketAddress", "restricted"
+ })
+ // CHECKSTYLE:ON
+ public class BungeeServerInfo implements ServerInfo
 @@ -116,7 +116,7 @@ public class BungeeServerInfo implements ServerInfo
          {
              server = ( players.isEmpty() ) ? null : players.iterator().next().getServer();
@@ -407,6 +380,26 @@ index 711270fc..6301e1c9 100644
          if ( server != null )
          {
              server.sendData( channel, data );
+@@ -183,12 +183,12 @@ public class BungeeServerInfo implements ServerInfo
+             }
+         };
+         new Bootstrap()
+-                .channel( PipelineUtils.getChannel( socketAddress ) )
+-                .group( BungeeCord.getInstance().workerEventLoopGroup )
+-                .handler( PipelineUtils.BASE )
+-                .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, BungeeCord.getInstance().getConfig().getRemotePingTimeout() )
+-                .remoteAddress( socketAddress )
+-                .connect()
+-                .addListener( listener );
++            .channel( PipelineUtils.getChannel( socketAddress ) )
++            .group( BungeeCord.getInstance().workerEventLoopGroup )
++            .handler( PipelineUtils.BASE )
++            .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, BungeeCord.getInstance().getConfig().getRemotePingTimeout() )
++            .remoteAddress( socketAddress )
++            .connect()
++            .addListener( listener );
+     }
+ }
 diff --git a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java b/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
 index 39853515..5c6a5902 100644
 --- a/proxy/src/main/java/net/md_5/bungee/compress/PacketDecompressor.java
@@ -468,7 +461,7 @@ index 0e0bb9c5..79c1492b 100644
  
          for ( ListenerInfo listener : listeners )
 diff --git a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
-index 682979ac..7dd7fa9f 100644
+index 682979ac..5501d8de 100644
 --- a/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
 +++ b/proxy/src/main/java/net/md_5/bungee/conf/YamlConfig.java
 @@ -48,15 +48,15 @@ public class YamlConfig implements ConfigurationAdapter
@@ -509,11 +502,20 @@ index 682979ac..7dd7fa9f 100644
 -        if(!doPermissions) return; // Waterfall
 +        if ( !doPermissions )
 +        {
-+            return;
++            return; // Waterfall
 +        }
          Map<String, Object> permissions = get( "permissions", null );
          if ( permissions == null )
          {
+@@ -245,7 +248,7 @@ public class YamlConfig implements ConfigurationAdapter
+     {
+         Collection<Map<String, Object>> base = get( "listeners", (Collection) Arrays.asList( new Map[]
+         {
+-            new HashMap()
++            new HashMap<>()
+         } ) );
+         Map<String, String> forcedDef = new HashMap<>();
+         forcedDef.put( "pvp.md-5.net", "pvp" );
 diff --git a/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java b/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java
 index 619d65a7..603737d8 100644
 --- a/proxy/src/main/java/net/md_5/bungee/connection/DownstreamBridge.java
@@ -544,7 +546,7 @@ index 9bb48d5d..eb1d5693 100644
  import net.md_5.bungee.ServerConnection.KeepAliveData;
  import net.md_5.bungee.UserConnection;
 diff --git a/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java b/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
-index 9a2a92d1..de4c53f7 100644
+index 9a2a92d1..5b11ecbd 100644
 --- a/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
 +++ b/proxy/src/main/java/net/md_5/bungee/http/HttpClient.java
 @@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpRequest;
@@ -566,6 +568,23 @@ index 9a2a92d1..de4c53f7 100644
          {
              getWithNettyResolver( eventLoop, uri, port, future, callback, ssl );
          } else
+@@ -96,7 +95,7 @@ public class HttpClient
+     {
+         InetSocketAddress address = InetSocketAddress.createUnresolved( uri.getHost(), port );
+         new Bootstrap().channel( PipelineUtils.getChannel( null ) ).group( eventLoop ).handler( new HttpInitializer( callback, ssl, uri.getHost(), port ) )
+-                    .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT ).resolver( dnsResolverGroup ).remoteAddress( address ).connect().addListener( future );
++        .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT ).resolver( dnsResolverGroup ).remoteAddress( address ).connect().addListener( future );
+     }
+ 
+     private static void getWithDefaultResolver(EventLoop eventLoop, URI uri, int port, ChannelFutureListener future, Callback<String> callback, boolean ssl)
+@@ -116,6 +115,6 @@ public class HttpClient
+             addressCache.put( uri.getHost(), inetHost );
+         }
+         new Bootstrap().channel( PipelineUtils.getChannel( null ) ).group( eventLoop ).handler( new HttpInitializer( callback, ssl, uri.getHost(), port ) )
+-                    .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT ).remoteAddress( inetHost, port ).connect().addListener( future );
++        .option( ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT ).remoteAddress( inetHost, port ).connect().addListener( future );
+     }
+ }
 diff --git a/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java b/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java
 index b91981e6..33e6a6c9 100644
 --- a/proxy/src/main/java/net/md_5/bungee/http/HttpHandler.java

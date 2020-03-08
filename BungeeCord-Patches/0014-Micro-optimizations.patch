@@ -1,4 +1,4 @@
-From 0fa2b0256db184110802b35fda06009366132db6 Mon Sep 17 00:00:00 2001
+From b8b0c6df3954a7fc1c5d7ee0df33b577f21abc04 Mon Sep 17 00:00:00 2001
 From: Tux <write@imaginarycode.com>
 Date: Thu, 5 Mar 2020 22:19:52 +0530
 Subject: [PATCH] Micro-optimizations
@@ -11,10 +11,10 @@ instead (affects command dispatch).
 servers
 
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index 2855e9c7..48333da2 100644
+index 26ab663f..721d8a94 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -520,7 +520,9 @@ public class BungeeCord extends ProxyServer
+@@ -555,7 +555,9 @@ public class BungeeCord extends ProxyServer
          String translation = "<translation '" + name + "' missing>";
          try
          {

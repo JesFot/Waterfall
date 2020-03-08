@@ -1,4 +1,4 @@
-From 17ea884239b05e323d196d2c110194eb119da362 Mon Sep 17 00:00:00 2001
+From 588b83271d8ef961301309cc19575208a01443fe Mon Sep 17 00:00:00 2001
 From: Tux <write@imaginarycode.com>
 Date: Thu, 5 Mar 2020 21:16:19 +0530
 Subject: [PATCH] Get rid of the security manager.
@@ -8,10 +8,10 @@ overwhelmingly feel that the security manager does not help the vast
 majority of BungeeCord users or plugin developers create correct code.
 
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index e6f4da69..2855e9c7 100644
+index 87c0e7b9..26ab663f 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -183,8 +183,6 @@ public class BungeeCord extends ProxyServer
+@@ -189,8 +189,6 @@ public class BungeeCord extends ProxyServer
          // Java uses ! to indicate a resource inside of a jar/zip/other container. Running Bungee from within a directory that has a ! will cause this to muck up.
          Preconditions.checkState( new File( "." ).getAbsolutePath().indexOf( '!' ) == -1, "Cannot use AltWaterfall in directory with ! in path." );
  

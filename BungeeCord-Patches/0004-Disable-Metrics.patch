@@ -1,14 +1,14 @@
-From b1f4cf06b22c31f33ac7391dd24c951642ab6498 Mon Sep 17 00:00:00 2001
+From 42593e9f22d9d60b03d8f1d3f03ddf6cb7fae2cf Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
 Date: Thu, 5 Mar 2020 21:11:35 +0530
 Subject: [PATCH] Disable Metrics
 
 
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index 2cf4b006..e6f4da69 100644
+index 36693e2e..87c0e7b9 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -122,7 +122,6 @@ public class BungeeCord extends ProxyServer
+@@ -123,7 +123,6 @@ public class BungeeCord extends ProxyServer
       * locations.yml save thread.
       */
      private final Timer saveThread = new Timer( "Reconnect Saver" );
@@ -16,22 +16,22 @@ index 2cf4b006..e6f4da69 100644
      /**
       * Server socket listener.
       */
-@@ -297,7 +296,6 @@ public class BungeeCord extends ProxyServer
+@@ -303,7 +302,6 @@ public class BungeeCord extends ProxyServer
                  }
              }
          }, 0, TimeUnit.MINUTES.toMillis( 5 ) );
 -        metricsThread.scheduleAtFixedRate( new Metrics(), 0, TimeUnit.MINUTES.toMillis( Metrics.PING_INTERVAL ) );
-     }
  
-     public void startListeners()
-@@ -431,7 +429,6 @@ public class BungeeCord extends ProxyServer
-                     reconnectHandler.close();
-                 }
-                 saveThread.cancel();
--                metricsThread.cancel();
+         Runtime.getRuntime().addShutdownHook( new Thread()
+         {
+@@ -461,7 +459,6 @@ public class BungeeCord extends ProxyServer
+             reconnectHandler.close();
+         }
+         saveThread.cancel();
+-        metricsThread.cancel();
  
-                 // TODO: Fix this shit
-                 getLogger().info( "Disabling plugins" );
+         getLogger().info( "Disabling plugins" );
+         for ( Plugin plugin : Lists.reverse( new ArrayList<>( pluginManager.getPlugins() ) ) )
 diff --git a/proxy/src/main/java/net/md_5/bungee/Metrics.java b/proxy/src/main/java/net/md_5/bungee/Metrics.java
 deleted file mode 100644
 index eabf7573..00000000

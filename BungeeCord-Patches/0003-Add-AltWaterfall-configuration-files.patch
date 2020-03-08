@@ -1,4 +1,4 @@
-From 787e6a22773fd3bd4ab511435c5010ce1c512633 Mon Sep 17 00:00:00 2001
+From 5bcabd9273332aeff9126f08f8dd84259a223584 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?J=C3=ABsFot?= <jesfot@gmail.com>
 Date: Thu, 5 Mar 2020 21:09:37 +0530
 Subject: [PATCH] Add AltWaterfall configuration files
@@ -43,10 +43,10 @@ index 00000000..f30d72fc
 +}
 \ No newline at end of file
 diff --git a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-index 4824acf4..2cf4b006 100644
+index 2a7764b6..36693e2e 100644
 --- a/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
 +++ b/proxy/src/main/java/net/md_5/bungee/BungeeCord.java
-@@ -48,6 +48,7 @@ import jline.console.ConsoleReader;
+@@ -49,6 +49,7 @@ import jline.console.ConsoleReader;
  import lombok.Getter;
  import lombok.Setter;
  import lombok.Synchronized;
@@ -54,7 +54,7 @@ index 4824acf4..2cf4b006 100644
  import net.md_5.bungee.api.CommandSender;
  import net.md_5.bungee.api.Favicon;
  import net.md_5.bungee.api.ProxyServer;
-@@ -110,7 +111,7 @@ public class BungeeCord extends ProxyServer
+@@ -111,7 +112,7 @@ public class BungeeCord extends ProxyServer
       * Configuration.
       */
      @Getter
